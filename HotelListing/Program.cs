@@ -1,3 +1,4 @@
+using Serilog;
 
 namespace HotelListing
 {
@@ -14,6 +15,10 @@ namespace HotelListing
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
+            // Adding the Serilog to read from the configuration settings
+            builder.Host.UseSerilog((context, configuration) => 
+                configuration.ReadFrom.Configuration(context.Configuration));
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -22,6 +27,9 @@ namespace HotelListing
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
+
+            // log all HTTO request
+            app.UseSerilogRequestLogging();
 
             app.UseHttpsRedirection();
 
