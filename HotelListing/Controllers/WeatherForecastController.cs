@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging.Console;
 
 namespace HotelListing.Controllers
 {
@@ -21,6 +22,12 @@ namespace HotelListing.Controllers
         [HttpGet(Name = "GetWeatherForecast")]
         public IEnumerable<WeatherForecast> Get()
         {
+            //ILoggerFactory loggerFactory = new LoggerFactory();
+            //loggerFactory.AddProvider();
+            //ILogger n = loggerFactory.CreateLogger(typeof(WeatherForecastController));
+            //n.LogInformation("Information checks");
+
+
             _logger.LogInformation("LOGGING");
             return Enumerable.Range(1, 5).Select(index => new WeatherForecast
             {

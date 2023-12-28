@@ -1,3 +1,6 @@
+using HotelListing.Data;
+using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 using Serilog;
 
 namespace HotelListing
@@ -9,6 +12,31 @@ namespace HotelListing
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
+            // -> This is used to configure the logging builder
+            //builder.Host.ConfigureLogging(logging =>
+            //{
+            //    logging.ClearProviders().AddConsole();
+
+            //});
+
+
+            //builder.Logging.ClearProviders().AddConsole(); -> This is the modern approach
+
+
+            // Adding the Serilog to read from the configuration settings
+            builder.Host.UseSerilog((context, configuration) =>
+                configuration.ReadFrom.Configuration(context.Configuration));
+
+            // Adding the SQL Provider
+            builder.Services.AddDbContext<DatabaseContext>(options =>
+            {
+                options.UseSqlServer(
+                    builder.Configuration.GetConnectionString(
+                        "sqlConnection"), u => u.CommandTimeout(50));
+            });
+
+
+            // Adding the policy to the cors
             builder.Services.AddCors(c =>
             {
                 c.AddPolicy("AllowAllOriginPolicy", builder => 
@@ -24,10 +52,6 @@ namespace HotelListing
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
-            // Adding the Serilog to read from the configuration settings
-            builder.Host.UseSerilog((context, configuration) => 
-                configuration.ReadFrom.Configuration(context.Configuration));
-
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -37,6 +61,7 @@ namespace HotelListing
                 app.UseSwaggerUI();
             }
 
+            // adding the cors middleware configured in the services to the app
             app.UseCors("AllowAllOriginPolicy");
         
 
