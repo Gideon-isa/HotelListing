@@ -32,7 +32,7 @@ namespace HotelListing
             {
                 options.UseSqlServer(
                     builder.Configuration.GetConnectionString(
-                        "sqlConnection"), u => u.CommandTimeout(50));
+                        "sqlConnection"));
             });
 
 
